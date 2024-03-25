@@ -4,8 +4,8 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className= "flex">
-      {/* <SideNavbar/> */}
+    <div className= "grid-cols-2">
+      <SideNavbar/>
       <Upload/>
     </div>
   );
