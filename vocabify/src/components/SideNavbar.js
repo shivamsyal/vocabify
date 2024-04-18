@@ -14,9 +14,13 @@ import {
 import { PiCards } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
 import { SiGoogleclassroom } from "react-icons/si";
+import Link from 'next/link';
 
 
-function SideNavbar() {
+function SideNavbar({onComponentChange}) {
+  const handleComponentSelection = (componentName) => {
+    onComponentChange(componentName);
+  }
   return (
     <div className="p-6 w-1/2 h-screen bg-white z-20 fixed top-0 -left-96 lg:left-0 lg:w-60  peer-focus:left-0 peer:transition ease-out delay-150 duration-200">
       <div className="flex flex-col justify-start item-center">
@@ -48,13 +52,13 @@ function SideNavbar() {
               Classes
             </h3>
           </div>
-          <div className="flex  mb-2 justify-start items-center gap-4 pl-5 hover:bg-gray-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
+          <div className="flex  mb-2 justify-start items-center gap-4 pl-5 hover:bg-gray-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto" onClick={() => onComponentChange('Flashcards')}>
             <PiCards className="text-2xl text-gray-600 group-hover:text-white "/>
             <h3 className="text-base text-gray-800 group-hover:text-white font-semibold ">
               Flashcards
             </h3>
           </div>
-          <div className="flex  mb-2 justify-start items-center gap-4 pl-5 hover:bg-gray-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
+          <div className="flex  mb-2 justify-start items-center gap-4 pl-5 hover:bg-gray-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto" onClick={() => onComponentChange('Upload')}>
           <MdOutlineUpload className="text-2xl text-gray-600 group-hover:text-white " />
             <h3 className="text-base text-gray-800 group-hover:text-white font-semibold ">
               Upload
