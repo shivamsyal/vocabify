@@ -14,9 +14,9 @@ const Upload = () => {
     console.log('sending new: ', videoLink);
     if (videoLink) {
        setPendingRequest(videoLink);
-       fetchCaptions(videoLink);  // Now trigger fetchCaptions
+       fetchCaptions(videoLink);
     }
-}, []); 
+  }, []);
 
   useEffect(() => {
     console.log('pendingRequest state:', pendingRequest); 
@@ -79,7 +79,6 @@ const Upload = () => {
         }
     } catch (error) {
         console.log(error);
-        // Handle error (e.g., display an error message)
     }
 };
   

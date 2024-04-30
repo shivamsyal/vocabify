@@ -1,5 +1,6 @@
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth;
+const fs = require('fs').promises;
 
 async function loadTokens() {
     try {
@@ -33,7 +34,6 @@ async function getCaptions(videoId) {
         const oauth2Client = await getOAuth2Client();
         console.log(oauth2Client.credentials.access_token);
         if (!oauth2Client.credentials.access_token) {
-            // Handle authorization flow (details below)
             throw new Error('User authorization required');  
         }
         const youtube = google.youtube({
@@ -57,13 +57,13 @@ async function getCaptions(videoId) {
         const promises = captionTracks.map(async (track) => {
             const downloadResponse = await youtube.captions.download({
                 id: track.id,
-                tfmt: 'srt', // Example: Download as SRT format 
+                tfmt: 'srt',
             });
-            return downloadResponse.data; // Contains caption text
+            return downloadResponse.data; // contains caption text
         });
 
         const captions = await Promise.all(promises);
-        return captions.join('\n\n'); // Join with separators if needed
+        return captions.join('\n\n');
     } catch (error) {
         throw error;
         

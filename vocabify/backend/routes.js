@@ -47,9 +47,7 @@ router.post('/api/upload', upload.single('file'), async (req, res) => {
 
     const fileData = await readFile(req.file.path);
     const processedData = processFileData(fileData); 
-
-    // Store in data folder
-    const fileName = `${Date.now()}.json`; // Example - timestamp as name
+    const fileName = `${Date.now()}.json`; // timestamp as name
     const filePath = `backend/data/${fileName}`;
     await fs.writeFile(filePath, JSON.stringify(fileData));
 
@@ -70,15 +68,15 @@ router.post('/api/captions', async (req, res) => {
 
       const captions = await getCaptions(videoId);
   
-      // Data processing example
+      
       const processedCaptions = processCaptions(captions); 
   
-      // Store in data folder
+      // store in data folder
       const fileName = `${Date.now()}-captions.json`; 
       const filePath = `backend/data/${fileName}`;
       await fs.writeFile(filePath, JSON.stringify(captions));
   
-      res.json({ captions: captions }); // Or just the captions
+      res.json({ captions: captions });
     } catch (error) {
       if (error.message === 'User authorization required') {
         
@@ -111,7 +109,7 @@ router.get('/oauth2callback', async (req, res) => {
       await storeTokens(tokens);
       console.log('got token...');
       console.log('prev video link', previousVideoLink);
-      res.redirect(`http://localhost:3000/?videoLink=${previousVideoLink}`); // Or a success page 
+      res.redirect(`http://localhost:3000/?videoLink=${previousVideoLink}`);
   } catch (error) {
       console.log('error in getting token...', error);
       console.error('Error exchanging code:', error); 

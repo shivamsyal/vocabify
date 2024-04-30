@@ -1,4 +1,4 @@
-const fs = require('fs').promises; // Using promises version of fs
+const fs = require('fs').promises;
 
 async function readFile(filePath) {
   try {
@@ -6,7 +6,7 @@ async function readFile(filePath) {
     return data;
   } catch (error) {
     console.error('Error reading file:', error);
-    throw error; // Re-throw to pass error to route handler
+    throw error;
   }
 }
 
