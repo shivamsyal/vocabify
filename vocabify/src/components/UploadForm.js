@@ -68,7 +68,7 @@ const Upload = () => {
             setPendingRequest(videoLink);
             window.location.href = 'http://localhost:3002/authorize';
         } else {
-            throw new Error('Error fetching captions'); 
+          console.log('Error fetching captions');
         }
     } catch (error) {
         console.log(error);

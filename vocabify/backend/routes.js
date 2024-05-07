@@ -1,10 +1,12 @@
 const fs = require('fs').promises;
 const express = require('express');
+const axios = require('axios');
 const multer = require('multer'); 
 const { readFile } = require('./utils/file-reader');
 const { getCaptions } = require('./utils/youtube-api');
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth;
+const path = require('path');
 const router = express.Router();
 const upload = multer({ dest: 'backend/data/uploads/' });
 let previousVideoLink = null;
@@ -41,6 +43,13 @@ async function getOAuth2Client() {
 
   return oauth2Client; 
 }
+
+router.get('/api/readflash', async (req, res) => {
+  const filePath = 'backend/data/flashcards.txt'; // Adjusted path
+  const fileData = await readFile(filePath);
+  console.log(fileData);
+  res.json({ fileContent: fileData });
+});
 
 
 router.post('/api/upload', upload.single('file'), async (req, res) => { 
@@ -120,14 +129,51 @@ router.get('/oauth2callback', async (req, res) => {
   }
 });
 
-function processFileData(fileData) {
-    console.log('Processing TXT file data...');
-    return fileData;
+async function processFileData(fileData) {
+  try {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      'messages': [{'role': 'user', 'content':`As a language expert, you were chosen to help students learning English. 
+            Your task is to select 10-15 key words from the following transcript and give a basic definition for each word. 
+            The definitions should be no longer than two lines. Try to keep the results fairly consistent in terms of identifying key words. 
+            Please make the outputs clear, concise, and easy to read without extra jargon. In your response, give me the reponse as "word1: definition, word2: definition, word3: definition", etc. \n\n${fileData}`}],
+      'max_tokens': 60,
+      'temperature': 0.2, 
+      'model': 'gpt-3.5-turbo'
+    }, {
+      headers: {
+        'Authorization': `Bearer sk-proj-ny5ZvhkK3CJo0GvPoNwuT3BlbkFJmJjLPw7tJf8UOeiOo59B`,
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(response.data.choices[0].message.content.split('\n'))
+    await fs.writeFile(`backend/data/flashcards.txt`, response.data.choices[0].message.content.split('\n'));
+  } catch (error) {
+    console.error(error);
+  }
 }
   
-function processCaptions(captions) {
-    console.log('Processing YouTube caption data...');
-    return captions;
+async function processCaptions(captions) {
+  try {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      'messages': [{'role': 'user', 'content':`As a language expert, you were chosen to help students learning English. 
+            Your task is to select 10-15 key words from the following transcript and give a basic definition for each word. 
+            The definitions should be no longer than two lines. Try to keep the results fairly consistent in terms of identifying key words. 
+            Please make the outputs clear and concise. In your response, give me the reponse as "word1: definition | word2: definition | word3: definition" \n\n${fileData}`}],
+      'max_tokens': 60,
+      'temperature': 0.2, 
+      'model': 'gpt-3.5-turbo'
+    }, {
+      headers: {
+        'Authorization': `Bearer sk-proj-ny5ZvhkK3CJo0GvPoNwuT3BlbkFJmJjLPw7tJf8UOeiOo59B`,
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log('Passed through try catch', response.data);
+    console.log(response.data.choices[0].message.content.split('\n'))
+    //await fs.writeFile(`flashcards.txt`, response.data.choices[0].message.content.split('\n'));
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function youtube_parser(url){

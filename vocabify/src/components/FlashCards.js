@@ -1,22 +1,38 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const FlashCards = () => {
   const [flashcards, setFlashcards] = useState([]);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
+  const [fileContent, setFileContent] = useState(null);
+  
+  const fetchData = async () => {
+    const response = await fetch('http://localhost:3002/api/readflash');
+    const data = await response.json();
+    setFileContent(data.fileContent); 
+  };
+  
 
   const handleAddFlashcard = () => {
-    if (question.trim() === '' || answer.trim() === '') {
-      alert('Please enter both question and answer.');
-      return;
-    }
 
     const newFlashcard = { question, answer, flipped: false };
     setFlashcards([...flashcards, newFlashcard]);
     setQuestion('');
     setAnswer('');
+  };
+
+  const handleVocabify = async () => {
+    await fetchData();
+    const data = fileContent;
+    const split = data.split(/\,\s*|\n/);
+    split.forEach(function(item){
+        const indv = item.split(/\:\s*|\n/);
+        const newFlashcard = { question: indv[0], answer: indv[1], flipped: false };
+        console.log(newFlashcard);
+        setFlashcards(prevFlashcards => [...prevFlashcards, newFlashcard]); 
+    });
   };
 
   const handleRemoveFlashcard = (index) => {
@@ -64,10 +80,11 @@ const FlashCards = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-300 to-purple-300">
         <div className="flashcards-container">
-            <header className="header">
+            <header className="ml-52">
                 <h1 className="fancy-title">Flashcards</h1>
             </header>
-            <div className="input-container">
+            <div className="input-container flex-col">
+                <div className='input-container'>
                 <input
                 type="text"
                 placeholder="Enter question"
@@ -91,7 +108,13 @@ const FlashCards = () => {
                     Update Flashcard
                 </button>
                 )}
+                </div>
+                <button className="btn" onClick={handleVocabify}>
+                    Vocabify Uploaded Data
+                </button>
+                
             </div>
+            
             <div className="flashcard-list">
                 {flashcards.map((flashcard, index) => (
                 <div key={index} className="flashcard">
