@@ -33,11 +33,13 @@ async function loadTokens() {
 
 async function getCaptions(videoId) {
     try {
-        const data = fs.readFile('backend/data/uploads/bfb7f04c7e58a46a9c84e730cf8a3713', 'utf-8');
-        return data;/* 
+        
         const oauth2Client = await getOAuth2Client();
         if (!oauth2Client.credentials.access_token) {
             throw new Error('User authorization required');  
+        } else {
+            const data = fs.readFile('backend/data/uploads/bfb7f04c7e58a46a9c84e730cf8a3713', 'utf-8');
+            return data;
         }
         const youtube = google.youtube({
             version: 'v3',
@@ -65,7 +67,7 @@ async function getCaptions(videoId) {
         });
 
         const captions = await Promise.all(promises);
-        return captions.join('\n\n'); */
+        return captions.join('\n\n');
     } catch (error) {
         throw error;
     }
