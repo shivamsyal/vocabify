@@ -13,15 +13,17 @@ async function loadTokens() {
   
   async function getOAuth2Client() {
     const tokens = await loadTokens();
-
-    console.log({tokens});
     const clientId = '189740406198-kh9s8pb0lth8gl46poepevsug7nep8j6.apps.googleusercontent.com'; 
     const clientSecret = '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';
     const redirectUri = 'http://localhost:3002/oauth2callback';
     const oauth2Client = new OAuth2(clientId, clientSecret, redirectUri);
   
     if (tokens) {
-      oauth2Client.setCredentials(tokens); 
+        oauth2Client.setCredentials(
+            {
+              access_token: tokens['access_token']
+            }
+          );
     }
   
     return oauth2Client; 
@@ -32,7 +34,6 @@ async function loadTokens() {
 async function getCaptions(videoId) {
     try {
         const oauth2Client = await getOAuth2Client();
-        console.log(oauth2Client.credentials.access_token);
         if (!oauth2Client.credentials.access_token) {
             throw new Error('User authorization required');  
         }
@@ -40,9 +41,8 @@ async function getCaptions(videoId) {
             version: 'v3',
             auth: oauth2Client
         });
-        // Step 1: Get Caption Tracks
         const listResponse = await youtube.captions.list({
-            part: 'id', // We only need the caption track IDs
+            part: 'id',
             videoId: videoId
         });
 
@@ -53,13 +53,12 @@ async function getCaptions(videoId) {
             return null;
         }
 
-        // Step 2: Download Captions
         const promises = captionTracks.map(async (track) => {
             const downloadResponse = await youtube.captions.download({
                 id: track.id,
                 tfmt: 'srt',
             });
-            return downloadResponse.data; // contains caption text
+            return downloadResponse.data;
         });
 
         const captions = await Promise.all(promises);

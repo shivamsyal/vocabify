@@ -6,7 +6,7 @@ const { getCaptions } = require('./utils/youtube-api');
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth;
 const router = express.Router();
-const upload = multer({ dest: 'backend/data/uploads/' }); // Files temporarily stored in 'uploads'
+const upload = multer({ dest: 'backend/data/uploads/' });
 let previousVideoLink = null;
 async function storeTokens(tokens) {
   await fs.writeFile('backend/data/token.json', JSON.stringify(tokens)); 
@@ -32,7 +32,11 @@ async function getOAuth2Client() {
   const oauth2Client = new OAuth2(clientId, clientSecret, redirectUri);
 
   if (tokens) {
-    oauth2Client.setCredentials(tokens); 
+    oauth2Client.setCredentials(
+      {
+        access_token: tokens['access_token']
+      }
+    );
   }
 
   return oauth2Client; 
@@ -44,10 +48,9 @@ router.post('/api/upload', upload.single('file'), async (req, res) => {
     if (!req.file) {
       throw new Error('No file received');
     }
-
     const fileData = await readFile(req.file.path);
     const processedData = processFileData(fileData); 
-    const fileName = `${Date.now()}.json`; // timestamp as name
+    const fileName = `input.txt`; // timestamp as name
     const filePath = `backend/data/${fileName}`;
     await fs.writeFile(filePath, JSON.stringify(fileData));
 

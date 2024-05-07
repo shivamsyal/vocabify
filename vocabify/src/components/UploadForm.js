@@ -11,16 +11,11 @@ const Upload = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const videoLink = urlParams.get('videoLink'); 
-    console.log('sending new: ', videoLink);
     if (videoLink) {
        setPendingRequest(videoLink);
        fetchCaptions(videoLink);
     }
   }, []);
-
-  useEffect(() => {
-    console.log('pendingRequest state:', pendingRequest); 
-  }, [pendingRequest]);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -34,7 +29,6 @@ const Upload = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('fetching called???');
     fetchCaptions(videoLink);
     
     const formData = new FormData();
@@ -49,13 +43,15 @@ const Upload = () => {
       if (!response.ok) {
         throw new Error('Error uploading file');
       }
-      setMessage('File uploaded successfully');
+      setMessage('Upload successful');
+      setClassName('');
+      setVideoLink('');
+      setFile(null);
     } catch (error) {
       setMessage(error.message);
     }
   };
   const fetchCaptions = async (videoLink) => {
-    console.log('fetching captions...');
     setPendingRequest(videoLink);
     try {
         const response = await fetch('http://localhost:3002/api/captions', {
@@ -68,11 +64,8 @@ const Upload = () => {
             const data = await response.json();
             setCaptions(data.captions);
             setPendingRequest(null);
-        } else if (response.status === 401) { // Authorization Required
-            // Redirect to the authorization flow
-            console.log('got 401, going to auth...');
+        } else if (response.status === 401) {
             setPendingRequest(videoLink);
-            console.log('pendingRequest: ', pendingRequest);
             window.location.href = 'http://localhost:3002/authorize';
         } else {
             throw new Error('Error fetching captions'); 
