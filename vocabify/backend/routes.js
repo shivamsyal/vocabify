@@ -45,7 +45,8 @@ async function getOAuth2Client() {
 }
 
 router.get('/api/readflash', async (req, res) => {
-  const filePath = 'backend/data/flashcards.txt'; // Adjusted path
+  const { fileName } = req.query;
+  const filePath = `backend/data/${fileName}`;
   const fileData = await readFile(filePath);
   console.log(fileData);
   res.json({ fileContent: fileData });
@@ -59,7 +60,7 @@ router.post('/api/upload', upload.single('file'), async (req, res) => {
     }
     const fileData = await readFile(req.file.path);
     const processedData = processFileData(fileData); 
-    const fileName = `input.txt`; // timestamp as name
+    const fileName = `input.txt`;
     const filePath = `backend/data/${fileName}`;
     await fs.writeFile(filePath, JSON.stringify(fileData));
 
@@ -77,14 +78,9 @@ router.post('/api/captions', async (req, res) => {
       const videoId = youtube_parser(videoLink);
       previousVideoLink = videoId;
       console.log('videoId: ', videoId);
-
       const captions = await getCaptions(videoId);
-  
-      
       const processedCaptions = processCaptions(captions); 
-  
-      // store in data folder
-      const fileName = `${Date.now()}-captions.json`; 
+      const fileName = `captions.txt`; 
       const filePath = `backend/data/${fileName}`;
       await fs.writeFile(filePath, JSON.stringify(captions));
   
@@ -135,8 +131,8 @@ async function processFileData(fileData) {
       'messages': [{'role': 'user', 'content':`As a language expert, you were chosen to help students learning English. 
             Your task is to select 10-15 key words from the following transcript and give a basic definition for each word. 
             The definitions should be no longer than two lines. Try to keep the results fairly consistent in terms of identifying key words. 
-            Please make the outputs clear, concise, and easy to read without extra jargon. In your response, give me the reponse as "word1: definition, word2: definition, word3: definition", etc. \n\n${fileData}`}],
-      'max_tokens': 60,
+            Please make the outputs clear, concise, and easy to read without extra jargon. In your response, give me the reponse in this format: "word1: definition| word2: definition| word3: definition", etc. \n\n${fileData}`}],
+      'max_tokens': 150,
       'temperature': 0.2, 
       'model': 'gpt-3.5-turbo'
     }, {
@@ -145,21 +141,20 @@ async function processFileData(fileData) {
         'Content-Type': 'application/json'
       }
     });
-    console.log(response.data.choices[0].message.content.split('\n'))
-    await fs.writeFile(`backend/data/flashcards.txt`, response.data.choices[0].message.content.split('\n'));
+    await fs.writeFile(`backend/data/flashcards-file.txt`, response.data.choices[0].message.content.split('\n'));
   } catch (error) {
     console.error(error);
   }
 }
   
 async function processCaptions(captions) {
-  try {
+  try { 
     const response = await axios.post('https://api.openai.com/v1/chat/completions', {
       'messages': [{'role': 'user', 'content':`As a language expert, you were chosen to help students learning English. 
             Your task is to select 10-15 key words from the following transcript and give a basic definition for each word. 
             The definitions should be no longer than two lines. Try to keep the results fairly consistent in terms of identifying key words. 
-            Please make the outputs clear and concise. In your response, give me the reponse as "word1: definition | word2: definition | word3: definition" \n\n${fileData}`}],
-      'max_tokens': 60,
+            Please make the outputs clear, concise, and easy to read without extra jargon. In your response, give me the reponse in this format: "word1: definition| word2: definition| word3: definition" \n\n${captions}`}],
+      'max_tokens': 300,
       'temperature': 0.2, 
       'model': 'gpt-3.5-turbo'
     }, {
@@ -168,9 +163,7 @@ async function processCaptions(captions) {
         'Content-Type': 'application/json'
       }
     });
-    console.log('Passed through try catch', response.data);
-    console.log(response.data.choices[0].message.content.split('\n'))
-    //await fs.writeFile(`flashcards.txt`, response.data.choices[0].message.content.split('\n'));
+    await fs.writeFile(`backend/data/flashcards-video.txt`, response.data.choices[0].message.content.split('\n'));
   } catch (error) {
     console.error(error);
   }

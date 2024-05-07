@@ -1,0 +1,472 @@
+hi so our group is doing a barber shop
+
+simulation for a CS 482 final project
+
+and um trying to optimize its efficiency
+
+so our motivation for this was that a
+
+lot of our group members visited the
+
+designer Cuts barber shop located on
+
+Green Street and barber shops are
+
+usually subject to change all the time
+
+in terms of service times and different
+
+barber shops have different weight times
+
+different styles so we wanted to
+
+optimize designer Cuts just because it
+
+was a place that we know um with our
+
+simulation we hope our objectives are uh
+
+that we want to optimize their current
+
+service offerings to see you know should
+
+they specialize in a certain area uh
+
+higher adequate staff so seeing whether
+
+they should increase or decrease the
+
+amount of Barbers they currently have
+
+and uh to improve customer satisfaction
+
+by uh lowering wait uh waiting times
+
+decreasing bulking
+
+Etc our methodology for the following
+
+was to create hypothetical scenarios
+
+altered scenarios of customers entering
+
+or exiting the shop and performing a
+
+full service alongside waiting for a
+
+potential haircut uh we wanted to stress
+
+test the system with various critical
+
+scenarios to analyze our final results
+
+by sometimes providing minimal staff
+
+varying the influx of customers during
+
+peak times changing the arrival times
+
+and also playing around a little bit
+
+with the waiting area size so in order
+
+to collect our data we talked to uh an
+
+employee at Barber Shop that we're
+
+studying and we asked him for uh in his
+
+experience what would be realistic um
+
+estimates for each of these following
+
+things and um so we were able to get
+
+good estimates on the average uh service
+
+times the interarrival times between
+
+customers um the size of the waiting
+
+area and what conditions might lead to a
+
+customer Bing after entering um so um
+
+using his uh the the input that he gave
+
+us we were able to put together specific
+
+uh random variables for each of these
+
+things and we'll go over that in the
+
+next slide in the event graph so here we
+
+have our event graph where so there are
+
+multiple servers there are C servers and
+
+N tracks the number of customers that
+
+are in the system at a given time B is
+
+going to keep track of the number of
+
+customers that b t is going to keep
+
+track of the total number of arrivals s
+
+is going to be the number of people
+
+served and uh W is going to be constant
+
+that's just the size of the waiting area
+
+and as you can see we have um kind of
+
+the standard looking event graph for a
+
+multi-server queue and the some of the
+
+more complicated parts are deciding if a
+
+customer is going to B we use this
+
+function here um E1 to determine the B
+
+rate basically the logic here is that uh
+
+if there are available Barbers then
+
+there's going to be no chance of boing
+
+if there are no available uh Barbers and
+
+there's um only some people in the
+
+waiting room then uh
+
+the B rate is going to be n Over N plus
+
+C + 5 which is going to increase if um
+
+there are more people in the waiting
+
+area and it's going to decrease if
+
+there's more Barbers so more Barbers
+
+means less weit time and then if uh
+
+waiting rooms all full then they're
+
+going to Bo no matter what and then um
+
+for the time of service we have three
+
+different types of haircuts each with
+
+those three probabilities 6.3 and 0.1
+
+with those um uniform ranges of times
+
+and then as far as times of arrival um
+
+most customers are going to arrive in
+
+the middle of the day in the prime of
+
+the day and less at the beginning and
+
+the end as um you can see we chose 29
+
+and 13 as our means for the exponential
+
+variables to start with our output
+
+analysis we simulated a thousand
+
+different working days for the barber
+
+shop uh and we only analyzed transient
+
+performance measures because these were
+
+the only ones that fit the context of
+
+our system we have a defined start and
+
+end time so a steady state wouldn't
+
+apply here we chose a 95% conference
+
+interval just because again fits the
+
+context of our project uh and getting a
+
+larger range for our waiting times is is
+
+unnecessary and being more precise is
+
+also um not really helpful alongside
+
+that as we'll show our margin of Errors
+
+for conference intervals were low enough
+
+that 95% confidence interval made the
+
+most sense uh we ran uh a thousand
+
+different iterations of IID samples and
+
+use the following equations to find the
+
+confence intervals uh the the uh grand
+
+mean and the grand standard
+
+deviation at the end of the day we use
+
+the replication method in order to find
+
+our confidence
+
+intervals so here we have our output for
+
+um each number of barbers in the shop so
+
+we ran the simulation with two Barbers
+
+three four and five to try to decide
+
+which number Barbers is going to be best
+
+for the shop and um as we could see in
+
+our in our table here it that there is a
+
+significant change in the mean weight
+
+time after we add a third Barber the the
+
+weight time goes from 34 minutes on
+
+average to to just over 10 minutes on
+
+average which was a huge um Improvement
+
+but going from 3 to four only improves
+
+the weight time um from 10 minutes to 3
+
+minutes which which in reality is
+
+probably not going to make a huge
+
+difference on the number of customers
+
+who B and um customer satisfaction and
+
+things like that as we can see we only
+
+got went from 34 to 38 um number of
+
+people served on average so um it's
+
+debatable whether or not the fourth uh
+
+Barber is necessary I think that depends
+
+on the specifics of how much the shop is
+
+going to be paying them and other things
+
+like that that uh the shop would be able
+
+to figure out on their own and I think
+
+clearly the fifth F Barber is not
+
+necessary it's moving the weight mean
+
+weight time from 3 minutes to um 1 and
+
+1/2 minutes about is is definitely not
+
+significant um one thing we were able to
+
+do is reduce the uh variance on the mean
+
+weight time the way reason we could do
+
+this is uh because there's a negative
+
+correlation between the arrival times
+
+and the weight times um we're able to
+
+use the uh antithetic uh variables using
+
+one minus U um and then using both of
+
+those outcomes um in order to reduce the
+
+variance and as you could see for for
+
+every um number of Barbers we were able
+
+to reduce the variance on the average
+
+weight
+
+time now into our output analysis for
+
+our scenario where we removed the long
+
+haircut we wanted to see if haircut
+
+style specialization will improve the
+
+conditions by removing this this option
+
+and as we can see uh changing the
+
+service offerings only slightly improved
+
+um the performance of the barber shop as
+
+compared to when we had three Barbers
+
+initially uh in our in our first output
+
+analysis uh it seems negligent to remove
+
+the long haircut option if it means
+
+outreaching to more potential customers
+
+it only affected Maybe by you know
+
+decreasing by around a minute for mean
+
+weight time and and maybe increasing
+
+like just over one customer service uh
+
+meaning that it's it's overall not uh
+
+super big change now onto the weight
+
+area size we wanted to also see if
+
+changing the size of the waiting area
+
+would affect the average waiting time
+
+times and uh as we can see here changing
+
+the size of the waiting area has a very
+
+negligent effect to weight times and
+
+service throughput and and even some
+
+cases it worsened uh the conditions as
+
+we can see um with uh with 10 and 20 uh
+
+this also makes sense theoretically if
+
+we think about it the waiting area is
+
+only a place where customers can sit
+
+down and wait for a open Barber if uh
+
+let's say the waiting area was smaller
+
+they would bulk nonetheless now you have
+
+more customers bulking in later times
+
+than earlier in the day when the waiting
+
+area would be more full The Barbers
+
+themselves aren't working faster it's
+
+just that more people are sitting down
+
+so buling either happens later or
+
+before some potential sources of error
+
+that we could have are external the
+
+times that were given by the employee
+
+could not maybe couldn't replicate the
+
+real world world model to full accuracy
+
+uh secondly the EXP exponentially
+
+distributed arrival times might over
+
+sandard eyesee the real world into
+
+arrival times of customer cust so that
+
+could you know there could be some
+
+discre discrepancy there and there might
+
+be some edge cases that aren't extremely
+
+obvious that we didn't consider which
+
+obviously could affect the service times
+
+so our final conclusions uh hopefully
+
+our findings can help designer Cuts make
+
+actionable decisions to optimize their
+
+store function and we were able to
+
+accomplish our objectives for
+
+identifying the number of Barbers we
+
+suggest to stay around three or four
+
+Barbers to ensure positive customer
+
+experience this is again aided by more
+
+potential data and more studies into how
+
+much they're paying and how much they're
+
+receiving per
+
+cut don't aim to specialize in a
+
+specific type of haircut the long
+
+haircut removing option didn't really
+
+affect service so keep your options open
+
+can maybe potentially get more customers
+
+and finally uh save space in the shop
+
+and keep the waiting area as is
+
+increasing the size again didn't really
+
+help in optimizing their function
+

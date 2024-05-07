@@ -7,9 +7,10 @@ const FlashCards = () => {
   const [answer, setAnswer] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
   const [fileContent, setFileContent] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('flashcards-file.txt');
   
   const fetchData = async () => {
-    const response = await fetch('http://localhost:3002/api/readflash');
+    const response = await fetch(`http://localhost:3002/api/readflash?fileName=${selectedOption}`);
     const data = await response.json();
     setFileContent(data.fileContent); 
   };
@@ -26,7 +27,7 @@ const FlashCards = () => {
   const handleVocabify = async () => {
     await fetchData();
     const data = fileContent;
-    const split = data.split(/\,\s*|\n/);
+    const split = data.split(/\|\s*|\n/);
     split.forEach(function(item){
         const indv = item.split(/\:\s*|\n/);
         const newFlashcard = { question: indv[0], answer: indv[1], flipped: false };
@@ -109,10 +110,19 @@ const FlashCards = () => {
                 </button>
                 )}
                 </div>
-                <button className="btn" onClick={handleVocabify}>
-                    Vocabify Uploaded Data
-                </button>
-                
+                <div className='flex items-center justify-center'>
+                    <button className="btn" onClick={handleVocabify}>
+                        Vocabify Uploaded Data
+                    </button>
+                    <div className='ml-10'>
+                        <h2 className='text-black'>Source</h2>
+                        <select value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
+                            <option value="Select Option">Select Option</option>
+                            <option value="flashcards-file.txt">File Upload</option>
+                            <option value="flashcards-video.txt">Video Link</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             
             <div className="flashcard-list">
